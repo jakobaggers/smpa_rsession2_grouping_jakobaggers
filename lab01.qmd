@@ -49,6 +49,8 @@ wv_winred_contribs <- read_rds("data/lab_01.rds")
 **Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
 **Q1** How many rows and columns does this dataframe have?
 **A1** 
+13,824
+24
 
 ```{r}
 glimpse(wv_winred_contribs)
@@ -59,8 +61,13 @@ glimpse(wv_winred_contribs)
 **Q2** Which West Virginia city provided the largest number of contributions? How many?
 **A2** 
 
-```{r}
+Martinsburg, 781
 
+```{r}
+wv_winred_contribs %>% 
+  group_by(city) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n))
 
 
 
@@ -70,21 +77,29 @@ glimpse(wv_winred_contribs)
 **Q3** Which West Virginia city accounted for the fewest contributions? How many?
 **A3** 
 
+All of the cities below that had only 1 contribution.
 ```{r}
 
-
+wv_winred_contribs %>% 
+  group_by(city) %>% 
+  summarize(n = n()) %>% 
+  arrange(n)
 
 
 
 ```
 **Q4** What's your best educated guess to explain why the city identified in question 2 had more contributions compared to the cities identified in question 3? Hint: you won't find the answer in the data, you'll need to do some quick web research. You do not need to write any code for this question, so no codeblock is provided.  
-**A4** 
+**A4** There is a very large population in Martinsburg and that is growing very fast (#2 fastest growing behind Cheat Lake)
 
 **Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation?
 **A5** 
-
+SAVE AMERICA 
 ```{r}
 
+wv_winred_contribs %>% 
+  group_by(memo_text) %>% 
+  summarize(amount = sum(amount), count = n(), avg_donation = mean(amount)) %>% 
+  arrange(desc(amount))
 
 
 
@@ -94,7 +109,7 @@ glimpse(wv_winred_contribs)
 
 **Q6** What is that top recipient and what explains its popularity? Hint: this will require web research, you won't be able to answer this purely from the data set.  You do not need to write any code for this question, so no codeblock is provided.  
 **A6** 
-
+SAVE AMERICA YEE YEE. It's a Political Action Committee that was founded by Trump.
 
 
 **Q7**. Produce a summary table that has the following information for West Virginia as a whole (the whole state, not by city):
@@ -108,10 +123,33 @@ glimpse(wv_winred_contribs)
 Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
 
 **A7**. 
+The largest contribution is 5800, and the smallest contributions are 0.01, with the mean being 26.70072 and the median is 10. This means that there are a lot of small donations and a few very large donations since the data is skewed right. 
 
+I want to write a story about the person who donated 0.01.
 ```{r}
 
+wv_summary <-
+  wv_winred_contribs %>% 
+  summarize(
+    count = n(),
+    total_amount_of_all_contributions = sum(amount),
+    avg_contribution = mean(amount),
+    med_contribution = median(amount),
+    small_amount = min(amount),
+    big_amount = max(amount)
+  )
 
+wv_summary_no_one_cent <-
+wv_winred_contribs %>% 
+  filter(amount != .01) %>% 
+  summarize(
+    count = n(),
+    total_amount_of_all_contributions = sum(amount),
+    avg_contribution = mean(amount),
+    med_contribution = median(amount),
+    small_amount = min(amount),
+    big_amount = max(amount)
+  )
 
 
 
